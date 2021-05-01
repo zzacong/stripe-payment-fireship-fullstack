@@ -294,6 +294,11 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-13.13.50.tgz#bc8ebf70c392a98ffdba7aab9b46989ea96c1c62"
   integrity sha512-y7kkh+hX/0jZNxMyBR/6asG0QMSaPSzgeVK63dhWHl4QAXCQB8lExXmzLL6SzmOgKHydtawpMnNhlDbv7DXPEA==
 
+"@types/node@^15.0.1":
+  version "15.0.1"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-15.0.1.tgz#ef34dea0881028d11398be5bf4e856743e3dc35a"
+  integrity sha512-TMkXt0Ck1y0KKsGr9gJtWGjttxlZnnvDtphxUOSd0bfaR6Q1jle+sPvrzNR1urqYTWMinoKvjKfXUGsumaO1PA==
+
 "@types/normalize-package-data@^2.4.0":
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/@types/normalize-package-data/-/normalize-package-data-2.4.0.tgz#e486d0d97396d79beedd0a6e33f4534ff6b4973e"
@@ -911,10 +916,10 @@ finalhandler@~1.1.2:
     statuses "~1.5.0"
     unpipe "~1.0.0"
 
-firebase-admin@^9.6.0:
-  version "9.6.0"
-  resolved "https://registry.yarnpkg.com/firebase-admin/-/firebase-admin-9.6.0.tgz#eabb0513f5aa0ebc473934669895d2a4d7e4e8a3"
-  integrity sha512-GNrxsQsZ6alz9u+uYmX84qcixxYQnfOrByxVgEHWiCI9JSCbMOQ/1Px2A6+Coz5zzFokTgXsHnIg+Qz7hMlNZg==
+firebase-admin@^9.7.0:
+  version "9.7.0"
+  resolved "https://registry.yarnpkg.com/firebase-admin/-/firebase-admin-9.7.0.tgz#c5fde178a1f1e757373b38601eb62a8ccbcb9393"
+  integrity sha512-dvxy4lK2P2BikE9lB2hj4dUXGm9tuoGRVtobXzCpk7uhi0/FuTOU1yp4IW7vlMI20fxTdm6FmCXdwUlMeSljBA==
   dependencies:
     "@firebase/database" "^0.8.1"
     "@firebase/database-types" "^0.6.1"
