@@ -19,6 +19,11 @@ app.use(
 )
 app.use(cors({ origin: 'http://localhost:3000' }))
 
+app.use((req, _res, next) => {
+  console.log('[ROUTE]', req.url)
+  next()
+})
+
 /**
  * MAIN API
  */

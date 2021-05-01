@@ -6,9 +6,11 @@ import { MyContext, WebhookHandlers } from './types'
 //  * Business logic for specific webhook event types
 const webhookHandlers: WebhookHandlers = {
   'payment_intent.succeeded': async (data: Stripe.PaymentIntent) => {
+    console.log('[payment_intent.succeeded]')
     // TODO: Add your business logic here
   },
   'payment_intent.payment_failed': async (data: Stripe.PaymentIntent) => {
+    console.log('[payment_intent.payment_failed]')
     // TODO: Add your business logic here
   },
 }
@@ -20,14 +22,10 @@ export async function handleStripeWebhook(
 ) {
   const sig = req.headers['stripe-signature']!
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET as string
-  const event = stripe.webhooks.constructEvent(
-    req['rawBody'],
-    sig,
-    webhookSecret
-  )
+  const event = stripe.webhooks.constructEvent(req.rawBody, sig, webhookSecret)
 
   try {
-    await webhookHandlers[event.type](event.data.object)
+    await webhookHandlers[event.type]?.(event.data.object)
     res.send({ received: true })
   } catch (error) {
     console.error(error)

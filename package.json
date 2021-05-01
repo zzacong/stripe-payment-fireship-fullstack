@@ -6,9 +6,9 @@
   "scripts": {
     "start": "node dist/index.js",
     "start:dev": "nodemon dist/index.js",
-    "dev": "concurrently \"yarn build:dev\" \"yarn start:dev\"",
     "build": "tsc",
-    "build:dev": "tsc -w"
+    "build:dev": "tsc -w",
+    "dev": "concurrently \"yarn build:dev\" \"yarn start:dev\""
   },
   "keywords": [],
   "author": "",
