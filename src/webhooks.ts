@@ -1,7 +1,6 @@
-import { Response } from 'express'
+import { Request, Response } from 'express'
 import Stripe from 'stripe'
 import { stripe } from './'
-import { MyContext, WebhookHandlers } from './types'
 
 //  * Business logic for specific webhook event types
 const webhookHandlers: WebhookHandlers = {
@@ -15,11 +14,7 @@ const webhookHandlers: WebhookHandlers = {
   },
 }
 
-// * Validate the stripe webhook secret, then call the handler for the event type
-export async function handleStripeWebhook(
-  req: MyContext['req'],
-  res: Response
-) {
+export async function handleStripeWebhook(req: Request, res: Response) {
   const sig = req.headers['stripe-signature']!
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET as string
   const event = stripe.webhooks.constructEvent(req.rawBody, sig, webhookSecret)

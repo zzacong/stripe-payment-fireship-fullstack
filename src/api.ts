@@ -2,7 +2,6 @@ import express, { Request, Response } from 'express'
 import cors from 'cors'
 import { createStripCheckoutSession } from './checkout'
 import { createPaymentIntent } from './payments'
-import { MyContext } from './types'
 import { handleStripeWebhook } from './webhooks'
 import { runAsync } from './helpers'
 
@@ -14,9 +13,10 @@ export const app = express()
 
 app.use(
   express.json({
-    verify: (req: MyContext['req'], _res, buffer) => (req['rawBody'] = buffer),
+    verify: (req: Request, _res, buffer) => (req.rawBody = buffer),
   })
 )
+
 app.use(cors({ origin: 'http://localhost:3000' }))
 
 app.use((req, _res, next) => {
