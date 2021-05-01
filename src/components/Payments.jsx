@@ -46,9 +46,9 @@ export default function Payments() {
     <>
       <h2>Payments</h2>
       <p>One-time payment scenario.</p>
-      {/* <div className="well">
+      <div className="well">
         <PaymentIntentData data={paymentIntent} />
-      </div> */}
+      </div>
 
       <div className="well">
         <h3>Step 1: Create a Payment Intent</h3>
@@ -65,6 +65,7 @@ export default function Payments() {
             diabled={paymentIntent}
             onChange={e => setAmount(e.target.value)}
           />
+
           <button
             className="btn btn-success"
             disabled={amount <= 0}
@@ -97,6 +98,35 @@ export default function Payments() {
           Pay
         </button>
       </form>
+    </>
+  )
+}
+
+function PaymentIntentData({ data }) {
+  if (!data) return <p>Payment Intent Not Created Yet</p>
+
+  const { id, amount, status, client_secret } = data
+
+  return (
+    <>
+      <h3>
+        Payment Intent{' '}
+        <span
+          className={
+            'badge ' +
+            (status === 'succeeded' ? 'badge-success' : 'badge-secondary')
+          }
+        >
+          {status}
+        </span>
+      </h3>
+      <pre>
+        ID: {id} <br />
+        Client Secret: {client_secret} <br />
+        Amount: {amount} <br />
+        Status:{status}
+        <br />
+      </pre>
     </>
   )
 }
