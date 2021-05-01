@@ -35,6 +35,7 @@ export async function createSubscription(
 
   // Update the user's status
   if (payment_intent.status === 'succeeded') {
+    console.log('[BILLING] Succeeded')
     await db
       .collection('users')
       .doc(userId)
@@ -75,7 +76,7 @@ export async function cancelSubscription(
       .doc(userId)
       .update({
         activePlans: firestore.FieldValue.arrayRemove(
-          subscription.items.data[0].plan.id
+          subscription.items.data[0].price.id
         ),
       })
   }

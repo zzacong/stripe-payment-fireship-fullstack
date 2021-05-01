@@ -27,7 +27,9 @@ const webhookHandlers: WebhookHandlers = {
     const userRef = db.collection('users').doc(userId)
 
     await userRef.update({
-      activePlans: firestore.FieldValue.arrayRemove(data.items.data[0].plan.id),
+      activePlans: firestore.FieldValue.arrayRemove(
+        data.items.data[0].price.id
+      ),
     })
   },
   'customer.subscription.created': async (data: Stripe.Subscription) => {
@@ -39,15 +41,21 @@ const webhookHandlers: WebhookHandlers = {
     const userRef = db.collection('users').doc(userId)
 
     await userRef.update({
-      activePlans: firestore.FieldValue.arrayUnion(data.items.data[0].plan.id),
+      activePlans: firestore.FieldValue.arrayUnion(data.items.data[0].price.id),
     })
   },
   'invoice.payment_succeeded': async (data: Stripe.Invoice) => {
     console.log('[WEBHOOK] invoice.payment_succeeded')
     // TODO: Add your business logic here
+    const customer = (await stripe.customers.retrieve(
+      data.customer as string
+    )) as Stripe.Customer
+    const userRef = db.collection('users').doc(customer.metadata.firebaseUID)
+    await userRef.update({ status: firestore.FieldValue.delete() })
   },
   'invoice.payment_failed': async (data: Stripe.Invoice) => {
     console.log('[WEBHOOK] invoice.payment_failed')
+    // TODO: Add your business logic here
     const customer = (await stripe.customers.retrieve(
       data.customer as string
     )) as Stripe.Customer
