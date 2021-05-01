@@ -1,6 +1,6 @@
 import Stripe from 'stripe'
 import { stripe } from '../'
-import { firestore } from '../firebase'
+import { db } from '../firebase'
 
 /**
  * * Gets the existing Stripe customer or creates a new record
@@ -9,7 +9,7 @@ export async function getOrCreateCustomer(
   userId: string,
   params?: Stripe.CustomerCreateParams
 ) {
-  const userSnapshot = await firestore.collection('users').doc(userId).get()
+  const userSnapshot = await db.collection('users').doc(userId).get()
 
   const { stripeCustomerId, email } = userSnapshot.data()!
   // if missing customerId, create it
