@@ -1,5 +1,5 @@
 import Stripe from 'stripe'
-import { stripe } from './index'
+import { stripe } from '../'
 
 /**
  * Create a Stripe Checkout session with line items

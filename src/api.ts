@@ -1,11 +1,11 @@
 import express, { Request, Response } from 'express'
 import cors from 'cors'
-import { createStripCheckoutSession } from './checkout'
-import { createPaymentIntent } from './payments'
-import { handleStripeWebhook } from './webhooks'
+import { createStripCheckoutSession } from './api/checkout'
+import { createPaymentIntent } from './api/payments'
+import { handleStripeWebhook } from './api/webhooks'
+import { createSetupIntent, listPaymentMethods } from './api/customers'
 import { runAsync, validateUser } from './helpers'
 import { decodeJWT } from './middleware'
-import { createSetupIntent, listPaymentMethods } from './customers'
 
 export const app = express()
 

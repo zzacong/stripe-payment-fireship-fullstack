@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import Stripe from 'stripe'
-import { stripe } from './'
+import { stripe } from '../'
 
 //  * Business logic for specific webhook event types
 const webhookHandlers: WebhookHandlers = {

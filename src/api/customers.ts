@@ -1,6 +1,6 @@
 import Stripe from 'stripe'
-import { stripe } from '.'
-import { firestore } from './firebase'
+import { stripe } from '../'
+import { firestore } from '../firebase'
 
 /**
  * * Gets the existing Stripe customer or creates a new record
