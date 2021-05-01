@@ -3,7 +3,8 @@ import cors from 'cors'
 import { createStripCheckoutSession } from './checkout'
 import { createPaymentIntent } from './payments'
 import { handleStripeWebhook } from './webhooks'
-import { runAsync } from './helpers'
+import { runAsync, validateUser } from './helpers'
+import { decodeJWT } from './middleware'
 
 export const app = express()
 
@@ -19,10 +20,14 @@ app.use(
 
 app.use(cors({ origin: 'http://localhost:3000' }))
 
+// * Log incoming request
 app.use((req, _res, next) => {
   console.log('[ROUTE]', req.url)
   next()
 })
+
+// * Decodes the Firebase JSON Web Token
+app.use(decodeJWT)
 
 /**
  * MAIN API
