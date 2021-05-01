@@ -25,7 +25,7 @@ app.use(
   })
 )
 
-app.use(cors({ origin: 'http://localhost:3000' }))
+app.use(cors({ origin: process.env.WEBAPP_URL }))
 
 // * Log incoming request
 app.use((req, _res, next) => {
