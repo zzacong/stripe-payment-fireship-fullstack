@@ -5,6 +5,7 @@ import { createPaymentIntent } from './payments'
 import { handleStripeWebhook } from './webhooks'
 import { runAsync, validateUser } from './helpers'
 import { decodeJWT } from './middleware'
+import { createSetupIntent, listPaymentMethods } from './customers'
 
 export const app = express()
 
@@ -59,3 +60,28 @@ app.post(
  */
 // * Handle Webhooks
 app.post('/hooks', runAsync(handleStripeWebhook))
+
+/**
+ * Customers and Setup Intents
+ */
+
+// * Save a card on the customer record with a SetupIntent
+app.post(
+  '/wallet',
+  runAsync(async (req: Request, res: Response) => {
+    const user = validateUser(req)
+    const setupIntent = await createSetupIntent(user.uid)
+    res.send(setupIntent)
+  })
+)
+
+// * Retrieve all cards attached to a customer
+app.get(
+  '/wallet',
+  runAsync(async (req: Request, res: Response) => {
+    const user = validateUser(req)
+
+    const wallet = await listPaymentMethods(user.uid)
+    res.send(wallet.data)
+  })
+)
