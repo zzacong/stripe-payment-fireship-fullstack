@@ -3,7 +3,7 @@ import firebase from 'firebase/app'
 import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js'
 import { useUser, AuthCheck } from 'reactfire'
 
-import { auth, firestore } from '../firebase'
+import { auth, db } from '../firebase'
 import { fetchFromAPI } from '../helpers'
 
 export default function Customers() {
@@ -20,7 +20,7 @@ export function SignIn() {
       new firebase.auth.GoogleAuthProvider()
     )
     const { uid, email } = credential.user
-    firestore.collection('users').doc(uid).set({ email }, { merge: true })
+    db.collection('users').doc(uid).set({ email }, { merge: true })
   }
 
   return (
@@ -98,7 +98,7 @@ function SaveCard() {
           <button
             className="btn btn-success"
             onClick={createSetupIntent}
-            hidden={setupIntent}
+            // hidden={!!setupIntent}
           >
             Attach New Credit Card
           </button>
