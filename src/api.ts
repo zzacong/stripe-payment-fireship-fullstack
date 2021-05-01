@@ -1,11 +1,17 @@
 import express, { Request, Response } from 'express'
 import cors from 'cors'
+
+import { runAsync, validateUser } from './helpers'
+import { decodeJWT } from './middleware'
 import { createStripCheckoutSession } from './api/checkout'
 import { createPaymentIntent } from './api/payments'
 import { handleStripeWebhook } from './api/webhooks'
 import { createSetupIntent, listPaymentMethods } from './api/customers'
-import { runAsync, validateUser } from './helpers'
-import { decodeJWT } from './middleware'
+import {
+  cancelSubscription,
+  createSubscription,
+  listSubscriptions,
+} from './api/billing'
 
 export const app = express()
 
@@ -83,5 +89,45 @@ app.get(
 
     const wallet = await listPaymentMethods(user.uid)
     res.send(wallet.data)
+  })
+)
+
+/**
+ * Billing and Recurring Subscriptions
+ */
+
+// * Create a and charge new Subscription
+app.post(
+  '/subscriptions',
+  runAsync(async (req: Request, res: Response) => {
+    const user = validateUser(req)
+    const { plan, payment_method } = req.body
+    const subscription = await createSubscription(
+      user.uid,
+      plan,
+      payment_method
+    )
+    res.send(subscription)
+  })
+)
+
+// * Get all subscriptions for a customer
+app.get(
+  '/subscriptions',
+  runAsync(async (req: Request, res: Response) => {
+    const user = validateUser(req)
+
+    const subscriptions = await listSubscriptions(user.uid)
+
+    res.send(subscriptions.data)
+  })
+)
+
+// * Unsubscribe or cancel a subscription
+app.patch(
+  '/subscriptions/:id',
+  runAsync(async (req: Request, res: Response) => {
+    const user = validateUser(req)
+    res.send(await cancelSubscription(user.uid, req.params.id))
   })
 )
