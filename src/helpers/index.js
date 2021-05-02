@@ -1,6 +1,6 @@
 import { auth } from '../firebase'
 
-const API_BASE = process.env.REACT_APP_SERVER_URL ?? 'http://localhost:5000'
+const API_BASE = process.env.REACT_APP_SERVER_URL
 
 export async function fetchFromAPI(endpointURL, opts) {
   const { method, body } = { method: 'POST', body: null, ...opts }

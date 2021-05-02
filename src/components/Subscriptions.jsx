@@ -1,9 +1,13 @@
-import { useState, useEffect, Suspense } from 'react'
+import { useState, Suspense, useCallback, useEffect } from 'react'
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js'
-import { useUser, AuthCheck } from 'reactfire'
+import {
+  useUser,
+  useFirestore,
+  useFirestoreDocData,
+  AuthCheck,
+} from 'reactfire'
 
 import { fetchFromAPI } from '../helpers'
-import { db } from '../firebase'
 
 import { SignIn, SignOut } from './Customers'
 
@@ -16,16 +20,11 @@ export default function Subscriptions() {
 }
 
 function UserData({ user }) {
-  const [data, setData] = useState({})
-
+  const userRef = useFirestore().collection('users').doc(user.uid)
   // Subscribe to the user's data in Firestore
-  useEffect(() => {
-    const unsubscribe = db
-      .collection('users')
-      .doc(user.uid)
-      .onSnapshot(doc => setData(doc.data()))
-    return unsubscribe
-  }, [])
+  const { status, data } = useFirestoreDocData(userRef)
+
+  if (status === 'loading') return null
 
   return (
     <pre>
@@ -45,12 +44,12 @@ function SubscribeToPlan() {
   const [loading, setLoading] = useState(false)
 
   // Fetch current subscriptions from the API
-  const getSubscriptions = async () => {
+  const getSubscriptions = useCallback(async () => {
     if (user) {
       const subs = await fetchFromAPI('subscriptions', { method: 'GET' })
       setSubscriptions(subs)
     }
-  }
+  }, [user])
 
   // Cancel a subscription
   const cancel = async id => {
@@ -91,7 +90,6 @@ function SubscribeToPlan() {
     // The subscription contains an invoice
     // If the invoice's payment succeeded then you're good,
     // otherwise, the payment intent must be confirmed
-
     const { latest_invoice } = subscription
 
     if (latest_invoice.payment_intent) {
@@ -113,6 +111,10 @@ function SubscribeToPlan() {
     setLoading(false)
     setPlan(null)
   }
+
+  useEffect(() => {
+    getSubscriptions()
+  }, [getSubscriptions])
 
   return (
     <>
@@ -184,9 +186,15 @@ function SubscribeToPlan() {
           <h3>Manage Current Subscriptions</h3>
           <div>
             {subscriptions.map(sub => (
-              <div key={sub.id}>
-                {sub.id}. Next payment of ${(sub.plan.amount / 100).toFixed(2)}{' '}
-                due {new Date(sub.current_period_end * 1000).toUTCString()}
+              <div
+                key={sub.id}
+                className="d-flex justify-content-between align-items-center"
+              >
+                <span className="text-left">
+                  {sub.id}. Next payment of $
+                  {(sub.plan.amount / 100).toFixed(2)} due{' '}
+                  {new Date(sub.current_period_end * 1000).toUTCString()}
+                </span>
                 <button
                   className="btn btn-sm btn-danger"
                   onClick={() => cancel(sub.id)}
