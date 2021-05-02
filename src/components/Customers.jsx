@@ -51,7 +51,6 @@ function SaveCard() {
   const [wallet, setWallet] = useState([])
 
   const getWallet = useCallback(async () => {
-    console.log(user)
     if (user) {
       const paymentMethods = await fetchFromAPI('wallet', { method: 'GET' })
       setWallet(paymentMethods)

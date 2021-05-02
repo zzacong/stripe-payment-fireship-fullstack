@@ -32,7 +32,7 @@ export default function Checkout() {
       sessionId,
     })
 
-    if (error) console.log(error)
+    if (error) console.error(error)
   }
 
   return (
