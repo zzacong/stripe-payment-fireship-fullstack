@@ -1,5 +1,4 @@
 import Stripe from 'stripe'
-import { app } from './api'
 
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
   apiVersion: '2020-08-27',
@@ -10,6 +9,8 @@ async function main() {
     const { config } = await import('dotenv')
     config()
   }
+
+  const { app } = await import('./api')
 
   const port = process.env.PORT || 5000
 
