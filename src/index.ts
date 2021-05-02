@@ -10,7 +10,6 @@ async function main() {
     const { config } = await import('dotenv')
     config()
   }
-  console.log(process.env.WEBAPP_URL)
 
   const port = process.env.PORT || 5000
 

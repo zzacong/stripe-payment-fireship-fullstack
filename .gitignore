@@ -11,3 +11,4 @@ build/
 dist/
 
 service-account.json
+service-account.min.json
