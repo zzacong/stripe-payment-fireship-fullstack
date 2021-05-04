@@ -11,6 +11,7 @@ import { fetchFromAPI } from '../helpers'
 
 import { SignIn, SignOut } from './Customers'
 
+// !! Subscriptions
 export default function Subscriptions() {
   return (
     <Suspense fallback={'loading user'}>
@@ -19,6 +20,7 @@ export default function Subscriptions() {
   )
 }
 
+// !! UserData
 function UserData({ user }) {
   const userRef = useFirestore().collection('users').doc(user.uid)
   // Subscribe to the user's data in Firestore
@@ -34,6 +36,7 @@ function UserData({ user }) {
   )
 }
 
+// !! SubscribeToPlan
 function SubscribeToPlan() {
   const stripe = useStripe()
   const elements = useElements()
@@ -128,7 +131,8 @@ function SubscribeToPlan() {
         <div className="well">
           <h2>Firestore Data</h2>
           <p>User's data in Firestore.</p>
-          {user?.uid && <UserData user={user} />}
+          <UserData user={user} />
+          {/* {user?.uid && <UserData user={user} />} */}
         </div>
 
         <div className="well">
