@@ -5,11 +5,6 @@ export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
 })
 
 async function main() {
-  if (process.env.NODE_ENV !== 'production') {
-    const { config } = await import('dotenv')
-    config()
-  }
-
   const { app } = await import('./api')
 
   const port = process.env.PORT || 5000
