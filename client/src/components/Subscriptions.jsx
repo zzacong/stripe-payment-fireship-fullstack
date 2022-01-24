@@ -48,11 +48,9 @@ function SubscribeToPlan() {
 
   // Fetch current subscriptions from the API
   const getSubscriptions = useCallback(async () => {
-    if (user) {
-      const subs = await fetchFromAPI('subscriptions', { method: 'GET' })
-      setSubscriptions(subs)
-    }
-  }, [user])
+    const subs = await fetchFromAPI('subscriptions', { method: 'GET' })
+    setSubscriptions(subs)
+  }, [])
 
   // Cancel a subscription
   const cancel = async id => {
@@ -116,8 +114,10 @@ function SubscribeToPlan() {
   }
 
   useEffect(() => {
-    getSubscriptions()
-  }, [getSubscriptions])
+    if (user) {
+      getSubscriptions()
+    }
+  }, [user, getSubscriptions])
 
   return (
     <>
@@ -131,8 +131,7 @@ function SubscribeToPlan() {
         <div className="well">
           <h2>Firestore Data</h2>
           <p>User's data in Firestore.</p>
-          <UserData user={user} />
-          {/* {user?.uid && <UserData user={user} />} */}
+          {user?.uid && <UserData user={user} />}
         </div>
 
         <div className="well">

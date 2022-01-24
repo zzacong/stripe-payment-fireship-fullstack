@@ -73,7 +73,7 @@ function Home() {
         </a>
         <a
           className="btn btn-secondary"
-          href="https://github.com/fireship-io/stripe-payments-js-course"
+          href="https://github.com/zzacong/stripe-payment-fireship-fullstack/tree/main/client"
         >
           source code
         </a>
