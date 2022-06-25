@@ -14,6 +14,9 @@ import {
 } from './api/billing'
 
 export const app = express()
+let webAppUrl: string | string[] =
+  process.env.WEBAPP_URL ?? 'http://localhost:3000'
+webAppUrl = webAppUrl?.includes?.(',') ? webAppUrl.split(',') : webAppUrl
 
 /**
  * MIDDLEWARE
@@ -25,7 +28,7 @@ app.use(
   })
 )
 
-app.use(cors({ origin: process.env.WEBAPP_URL }))
+app.use(cors({ origin: webAppUrl }))
 
 // * Log incoming request
 app.use((req, _res, next) => {
