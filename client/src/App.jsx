@@ -1,43 +1,48 @@
+import { Suspense, lazy } from 'react'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
-import Checkout, { CheckoutSuccess, CheckoutFail } from './components/Checkout'
-import Customers from './components/Customers'
-import Navbar from './components/Navbar'
-import Payments from './components/Payments'
-import Subscriptions from './components/Subscriptions'
+
+import { CheckoutSuccess, CheckoutFail } from './components/Checkout'
+const Checkout = lazy(() => import('./components/Checkout'))
+const Customers = lazy(() => import('./components/Customers'))
+const Navbar = lazy(() => import('./components/Navbar'))
+const Payments = lazy(() => import('./components/Payments'))
+const Subscriptions = lazy(() => import('./components/Subscriptions'))
 
 export default function App() {
   return (
-    <Router>
-      <div>
-        <Navbar />
+    <Suspense fallback={<div>Loading...</div>}>
+      <Router>
+        <div>
+          <Navbar />
 
-        <main>
-          <Switch>
-            <Route exact path="/">
-              <Home />
-            </Route>
-            <Route path="/checkout">
-              <Checkout />
-            </Route>
-            <Route path="/payments">
-              <Payments />
-            </Route>
-            <Route path="/customers">
-              <Customers />
-            </Route>
-            <Route path="/subscriptions">
-              <Subscriptions />
-            </Route>
-            <Route path="/success">
-              <CheckoutSuccess />
-            </Route>
-            <Route path="/failed">
-              <CheckoutFail />
-            </Route>
-          </Switch>
-        </main>
-      </div>
-    </Router>
+          <main>
+            <Switch>
+              <Route exact path="/">
+                <Home />
+              </Route>
+              <Route path="/checkout">
+                <Checkout />
+              </Route>
+              <Route path="/payments">
+                <Payments />
+              </Route>
+              <Route path="/customers">
+                <Customers />
+              </Route>
+              <Route path="/subscriptions">
+                <Subscriptions />
+              </Route>
+              <Route path="/success">
+                <CheckoutSuccess />
+              </Route>
+              <Route path="/failed">
+                <CheckoutFail />
+              </Route>
+            </Switch>
+          </main>
+        </div>
+      </Router>
+    </Suspense>
   )
 }
 
