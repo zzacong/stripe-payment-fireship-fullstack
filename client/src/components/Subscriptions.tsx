@@ -55,7 +55,6 @@ function SubscribeToPlan() {
   // Fetch current subscriptions from the API
   const getSubscriptions = useCallback(async () => {
     const subs = await fetchFromAPI('subscriptions', { method: 'GET' })
-    console.log({ subs })
     setSubscriptions(subs)
   }, [])
 

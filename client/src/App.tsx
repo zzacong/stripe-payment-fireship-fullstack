@@ -1,5 +1,5 @@
 import { Suspense, lazy } from 'react'
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
 import Navbar from './components/Navbar'
 import { CheckoutSuccess, CheckoutFail } from './components/Checkout'
@@ -12,37 +12,22 @@ const Subscriptions = lazy(() => import('./components/Subscriptions'))
 export default function App() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <Router>
+      <BrowserRouter>
         <div>
           <Navbar />
-
           <main>
-            <Switch>
-              <Route exact path="/">
-                <Home />
-              </Route>
-              <Route path="/checkout">
-                <Checkout />
-              </Route>
-              <Route path="/payments">
-                <Payments />
-              </Route>
-              <Route path="/customers">
-                <Customers />
-              </Route>
-              <Route path="/subscriptions">
-                <Subscriptions />
-              </Route>
-              <Route path="/success">
-                <CheckoutSuccess />
-              </Route>
-              <Route path="/failed">
-                <CheckoutFail />
-              </Route>
-            </Switch>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/checkout" element={<Checkout />} />
+              <Route path="/payments" element={<Payments />} />
+              <Route path="/customers" element={<Customers />} />
+              <Route path="/subscriptions" element={<Subscriptions />} />
+              <Route path="/success" element={<CheckoutSuccess />} />
+              <Route path="/failed" element={<CheckoutFail />} />
+            </Routes>
           </main>
         </div>
-      </Router>
+      </BrowserRouter>
     </Suspense>
   )
 }

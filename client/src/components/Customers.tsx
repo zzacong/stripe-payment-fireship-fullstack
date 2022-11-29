@@ -60,7 +60,6 @@ function SaveCard() {
   const getWallet = useCallback(async () => {
     if (signInCheckResult.signedIn) {
       const paymentMethods = await fetchFromAPI('wallet', { method: 'GET' })
-      console.log({ paymentMethods })
       setWallet(paymentMethods)
     }
   }, [signInCheckResult.signedIn])
