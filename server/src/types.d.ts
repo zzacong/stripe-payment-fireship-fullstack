@@ -1,5 +1,5 @@
-import { auth } from 'firebase-admin'
-import Stripe from 'stripe'
+import type { auth } from 'firebase-admin'
+import type Stripe from 'stripe'
 
 type Fn = (data: Stripe.PaymentIntent) => void
 
@@ -17,7 +17,7 @@ declare global {
     'payment_intent.succeeded': Fn
     'payment_intent.payment_failed': Fn
   }
-  
+
   namespace Express {
     interface Request {
       rawBody: Buffer
