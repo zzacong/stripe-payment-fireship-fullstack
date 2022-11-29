@@ -1,14 +1,14 @@
-import { auth } from '../firebase'
+import { auth } from './firebase'
 
 const API_BASE = import.meta.env.VITE_SERVER_URL
 
-type fetchFromAPIIOptsArgs = { method: string; body: Object | null }
+type FetchAPIOptsArgs = { method?: string; body?: Object | null }
 
-export async function fetchFromAPI(
+export async function fetchFromAPI<T = any>(
   endpointURL: string,
-  opts: fetchFromAPIIOptsArgs
+  opts?: FetchAPIOptsArgs
 ) {
-  const { method = 'POST', body = null } = opts
+  const { method = 'POST', body = null } = { ...opts }
 
   const user = auth.currentUser
   const token = user && (await user.getIdToken(false))
@@ -22,5 +22,5 @@ export async function fetchFromAPI(
     },
   })
 
-  return res.json()
+  return res.json() as T
 }

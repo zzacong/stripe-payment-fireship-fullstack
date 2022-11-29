@@ -1,13 +1,15 @@
+import type { PaymentIntent } from '@stripe/stripe-js'
+
 import { useState } from 'react'
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js'
-import { fetchFromAPI } from '../helpers'
+import { fetchFromAPI } from '../lib/helpers'
 
 export default function Payments() {
   const stripe = useStripe()
   const elements = useElements()
 
   const [amount, setAmount] = useState(0)
-  const [paymentIntent, setPaymentIntent] = useState()
+  const [paymentIntent, setPaymentIntent] = useState<PaymentIntent>()
 
   // * Create a payment intent on the server
   const createPaymentIntent = async () => {
@@ -23,16 +25,15 @@ export default function Payments() {
   }
 
   // * Handle submission of card details
-  const handleSubmit = async e => {
+  const handleSubmit: React.FormEventHandler = async e => {
     e.preventDefault()
-    const cardElement = elements.getElement(CardElement)
+    if (!elements || !stripe) return
+    const cardElement = elements.getElement(CardElement)!
     // confirm card payment
-    const {
-      paymentIntent: updatedPaymentIntent,
-      error,
-    } = await stripe.confirmCardPayment(paymentIntent.client_secret, {
-      payment_method: { card: cardElement },
-    })
+    const { paymentIntent: updatedPaymentIntent, error } =
+      await stripe.confirmCardPayment(paymentIntent?.client_secret!, {
+        payment_method: { card: cardElement },
+      })
 
     if (error) {
       console.error(error)
@@ -62,8 +63,8 @@ export default function Payments() {
             className="form-control"
             type="number"
             value={amount}
-            diabled={paymentIntent}
-            onChange={e => setAmount(e.target.value)}
+            disabled={!!paymentIntent}
+            onChange={e => setAmount(+e.target.value)}
           />
 
           <button
@@ -102,7 +103,7 @@ export default function Payments() {
   )
 }
 
-function PaymentIntentData({ data }) {
+function PaymentIntentData({ data }: { data: PaymentIntent | undefined }) {
   if (!data) return <p>Payment Intent Not Created Yet</p>
 
   const { id, amount, status, client_secret } = data

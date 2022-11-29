@@ -1,10 +1,12 @@
-import { Suspense, useCallback, useEffect, useState } from 'react'
-import firebase from 'firebase/app'
-import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js'
-import { useUser, AuthCheck } from 'reactfire'
+import type { PaymentMethod, SetupIntent } from '@stripe/stripe-js'
 
-import { auth, db } from '../firebase'
-import { fetchFromAPI } from '../helpers'
+import { Suspense, useCallback, useEffect, useState } from 'react'
+import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js'
+import { useUser, useSigninCheck, useFirestore, useAuth } from 'reactfire'
+import { doc, setDoc } from 'firebase/firestore'
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
+
+import { fetchFromAPI } from '../lib/helpers'
 
 export default function Customers() {
   return (
@@ -15,12 +17,13 @@ export default function Customers() {
 }
 
 export function SignIn() {
+  const auth = useAuth()
+  const db = useFirestore()
+
   const signIn = async () => {
-    const credential = await auth.signInWithPopup(
-      new firebase.auth.GoogleAuthProvider()
-    )
+    const credential = await signInWithPopup(auth, new GoogleAuthProvider())
     const { uid, email } = credential.user
-    db.collection('users').doc(uid).set({ email }, { merge: true })
+    setDoc(doc(db, 'users', uid), { email }, { merge: true })
   }
 
   return (
@@ -30,49 +33,53 @@ export function SignIn() {
   )
 }
 
-export function SignOut({ user }) {
+export function SignOut() {
+  const auth = useAuth()
+  const { data: user } = useUser()
+
+  if (!user) return null
   return (
-    user && (
-      <button
-        className="btn btn-outline-secondary"
-        onClick={() => auth.signOut()}
-      >
-        Sign Out | {user.displayName}
-      </button>
-    )
+    <button
+      className="btn btn-outline-secondary"
+      onClick={() => auth.signOut()}
+    >
+      Sign Out | {user.displayName}
+    </button>
   )
 }
 
 function SaveCard() {
   const stripe = useStripe()
   const elements = useElements()
-  const { data: user } = useUser()
-  const [setupIntent, setSetupIntent] = useState()
-  const [wallet, setWallet] = useState([])
+
+  const { data: signInCheckResult } = useSigninCheck()
+
+  const [setupIntent, setSetupIntent] = useState<SetupIntent>()
+  const [wallet, setWallet] = useState<PaymentMethod[]>([])
 
   const getWallet = useCallback(async () => {
-    if (user) {
+    if (signInCheckResult.signedIn) {
       const paymentMethods = await fetchFromAPI('wallet', { method: 'GET' })
+      console.log({ paymentMethods })
       setWallet(paymentMethods)
     }
-  }, [user])
+  }, [signInCheckResult.signedIn])
 
   const createSetupIntent = async () => {
     const si = await fetchFromAPI('wallet')
     setSetupIntent(si)
   }
 
-  const handleSubmit = async e => {
+  const handleSubmit: React.FormEventHandler = async e => {
     e.preventDefault()
-    const cardElement = elements.getElement(CardElement)
+    if (!elements || !stripe) return
+    const cardElement = elements.getElement(CardElement)!
 
     // Confirm Card Section
-    const {
-      setupIntent: updatedSetupIntent,
-      error,
-    } = await stripe.confirmCardSetup(setupIntent.client_secret, {
-      payment_method: { card: cardElement },
-    })
+    const { setupIntent: updatedSetupIntent, error } =
+      await stripe.confirmCardSetup(setupIntent?.client_secret!, {
+        payment_method: { card: cardElement },
+      })
 
     if (error) {
       alert(error.message)
@@ -88,8 +95,10 @@ function SaveCard() {
     getWallet()
   }, [getWallet])
 
+  if (!signInCheckResult.signedIn) return <SignIn />
+
   return (
-    <AuthCheck fallback={<SignIn />}>
+    <>
       <div className="well">
         <h3>Step 1: Create a Setup Intent</h3>
 
@@ -128,20 +137,22 @@ function SaveCard() {
       <div className="well">
         <h3>Retrieve all Payment Sources</h3>
         <select className="form-control">
-          {wallet.map(paymentSource => (
-            <CreditCard key={paymentSource.id} card={paymentSource.card} />
-          ))}
+          {wallet.map(paymentSource =>
+            paymentSource.card ? (
+              <CreditCard key={paymentSource.id} card={paymentSource.card} />
+            ) : null
+          )}
         </select>
       </div>
 
       <div className="well">
-        <SignOut user={user} />
+        <SignOut />
       </div>
-    </AuthCheck>
+    </>
   )
 }
 
-function CreditCard({ card }) {
+function CreditCard({ card }: { card: PaymentMethod.Card }) {
   const { last4, brand, exp_month, exp_year } = card
 
   return (

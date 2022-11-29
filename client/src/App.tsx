@@ -1,10 +1,11 @@
 import { Suspense, lazy } from 'react'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 
+import Navbar from './components/Navbar'
 import { CheckoutSuccess, CheckoutFail } from './components/Checkout'
+
 const Checkout = lazy(() => import('./components/Checkout'))
 const Customers = lazy(() => import('./components/Customers'))
-const Navbar = lazy(() => import('./components/Navbar'))
 const Payments = lazy(() => import('./components/Payments'))
 const Subscriptions = lazy(() => import('./components/Subscriptions'))
 

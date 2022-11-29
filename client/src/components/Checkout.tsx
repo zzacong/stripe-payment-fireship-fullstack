@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { useStripe } from '@stripe/react-stripe-js'
-import { fetchFromAPI } from '../helpers'
+import { useLocation } from 'react-router-dom'
+
+import { fetchFromAPI } from '../lib/helpers'
 
 export default function Checkout() {
   const stripe = useStripe()
@@ -15,23 +17,22 @@ export default function Checkout() {
     quantity: 0,
   })
 
-  const changeQuantity = v => {
+  const changeQuantity = (v: number) => {
     setProduct(prev => ({
       ...prev,
       quantity: Math.max(0, product.quantity + v),
     }))
   }
 
-  const handleClick = async e => {
+  const handleClick = async () => {
+    if (!stripe) return
     const body = { line_items: [product] }
     const { id: sessionId } = await fetchFromAPI('checkouts', {
       body,
     })
-
     const { error } = await stripe.redirectToCheckout({
       sessionId,
     })
-
     if (error) console.error(error)
   }
 
@@ -80,8 +81,9 @@ export default function Checkout() {
 }
 
 export function CheckoutSuccess() {
-  const url = window.location.href
-  const sessionId = new URL(url).searchParams.get('session_id')
+  const { search } = useLocation()
+  const sessionId = new URLSearchParams(search).get('session_id')
+
   return <h3>Checkout was a Success! {sessionId}</h3>
 }
 
